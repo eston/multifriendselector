@@ -1,6 +1,6 @@
 h1. MultiFriendSelector
 
-A Facebook-like Multi-friend elector interface for social applications built on the "jQuery framework.":http://jquery.com/ Easily extensible to other social networks.
+A Facebook-like Multi-friend selector interface for social applications built on the "jQuery framework.":http://jquery.com/ Easily extensible to other social networks.
 
 
 

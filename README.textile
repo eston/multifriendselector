@@ -1,0 +1,44 @@
+h1. Twitter Multi-Friend Selector
+h3. A Facebook-like Multi-Friend Selector interface for Twitter friends built on the "jQuery framework.":http://jquery.com/
+
+
+
+h2. About
+The Twitter MultiFriendSelector was written by Eston Bond for use on the social game "Spymaster":http://playspymaster.com/, which needed such an interface for its invite page. The multi-friend selector control is licensed under an "MIT License":http://en.wikipedia.org/wiki/MIT_License, just as jQuery is. I'd like to know where this control is being used — if you decide to use it, please drop me a line at "eston@socialuxe.com":mailto:eston@socialuxe.com.
+
+
+
+h2. Usage
+To implement a MultiFriendSelector control, simply give it the _div_ element you wish for it to instantiate itself in. For example, to instantiate the control in a div with the id _my-friend-selector_, simply write:
+
+bq. _$('#my-friend-selector').multifriendselector({id: 'eston'});_
+
+This will instantiate a MultiFriendSelector for the twitter user "eston":http://twitter.com/eston. 
+
+The MultiFriendSelector has many options you can set upon instantiation. Many mimic the same syntax used for the FBML "fb:multi-friend-selector":http://wiki.developers.facebook.com/index.php/Fb:multi-friend-selector for the sake of other platform developers. Supported options are described below. These should be passed in as key/value pairs in an object as the first argument. 
+
+* *action_url*: The _action_ attribute of the form (i.e., where to post the selected ids.) (_Defaults to /_)
+* *actiontext*: The title at the top of the MultiFriendSelector. (_Defaults to 'Select friends to invite'_),
+* *actiongraf*: The paragraph to display below the MultiFriendSelector (_Defaults to 'Select your friends to invite to this service.'_)
+* *async_post*: Whether or not to post the selected IDs asynchronously. (_Defaults to true_)
+* *async_post_url*: An optional asynchronous endpoint to post an async ID post to, separate from *action_url*. If this is not set, asynchronous POST requests will use *action_url*. (_Defaults to null_)
+* *async_post_redirect*: A redirect point that is fired once the asynchronous post is complete. I will probably change this to a callback later. (_Defaults to '/'_)
+* *bypass*: The default caption for bypassing the MultiFriendSelector. (_Defaults to 'Skip'_)
+* *bypass_url*: The href at which bypass links point. (_Defaults to /_)
+* *development_mode*: Toggles on/off development mode. For developer use only. 
+* *exclude_ids*: An *array* of Twitter IDs to exclude from the MultiFriendSelector interface. (_Defaults to empty array_) 
+* *friend_type*: The type of friends to populate into the MultiFriendSelector control. Supports _'friends'_ and _'followers'_ by default. (_Defaults to _friends_)
+* *id*: The Twitter ID or screen name to pull friends for. *This attribute is required.*
+* *limit*: A limit of how many Twitter friends to display. Raising this limit without having a proxy for authentication in place will get yourself quickly rate limited. (_Defaults to 100_)
+* *mfs_id*: '',
+* *post_action*: The primary POST action for the MultiFriendSelector control. (_Defaults to '/'_)
+
+
+
+h2. Public methods
+Most functionality is encapsulated such that it will not clutter the namespace of your application further, including the HTML and CSS that the MultiFriendSelector code writes. However, two functions have been namespaced such that they are editable, in case you wish to deploy this function using Twitter authentication or server-side proxies for communication. If you are interested in this type of extension, please see *$.fn.multifriendselector.getData*, the function responsible for retrieving a user's friends/followers and *$.fn.multifriendselector.postForm*, the asynchronous form posting plugin.
+
+
+
+h2. Bug reports
+Any bugs in this code should be reported to me via email at the email address above. Bugs have a far greater chance of being patched if you submit a patch or request a pull.

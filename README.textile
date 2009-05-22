@@ -1,6 +1,6 @@
-h1. Twitter Multi-Friend Selector
+h1. MultiFriendSelector
 
-A Facebook-like Multi-Friend Selector interface for Twitter friends built on the "jQuery framework.":http://jquery.com/
+A Facebook-like Multi-friend elector interface for social applications built on the "jQuery framework.":http://jquery.com/ Easily extensible to other social networks.
 
 
 

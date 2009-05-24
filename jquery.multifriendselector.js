@@ -1,6 +1,6 @@
 /**
- *  Twitter Multi-Friend Selector
- *  A jQuery-based multi-friend selector for Twitter friends.
+ *  MultiFriendSelector
+ *  A jQuery-based multi-friend selector control.
  *
  *  By Eston Bond (eston@socialuxe.com)
  *  Copyright (c) 2009 Eston Bond.
@@ -27,7 +27,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  *
  *  @author eston
- *  @requires jquery
+ *  @requires jquery-1.3.2
+ *  @provides multifriendselector
 **/
 
 (function($) {
@@ -59,7 +60,7 @@
     
     if (!options.id) {
       if (options.development_mode) {
-        debug('Twitter MultiFriendSelector: No ID has been specified.');
+        debug('MultiFriendSelector: No ID has been specified.');
       }
       return false;
     }
@@ -70,29 +71,29 @@
     } else {
       $this.append($(composeLayout()));
       
-      $form = $this.find('form.socialuxe-TwitterMFS');
-      $friendsBox = $this.find('div.socialuxe-TwitterMFS-friends');
-      $selectedBox = $this.find('div.socialuxe-TwitterMFS-friendsSelected');
-      $loadingBox = $this.find('div.socialuxe-TwitterMFS-loading');
-      $selectedInput = $this.find('input.socialuxe-TwitterMFS-selectedID');
+      $form = $this.find('form.socialuxe-MFS');
+      $friendsBox = $this.find('div.socialuxe-MFS-friends');
+      $selectedBox = $this.find('div.socialuxe-MFS-friendsSelected');
+      $loadingBox = $this.find('div.socialuxe-MFS-loading');
+      $selectedInput = $this.find('input.socialuxe-MFS-selectedID');
       
       // attach events to links for toggling between boxes
-      $this.find('a.socialuxe-TwitterMFS-friendsLink')
-           .bind('click.twittermfs', handleFriendsLinkClick);
+      $this.find('a.socialuxe-MFS-friendsLink')
+           .bind('click.MFS', handleFriendsLinkClick);
 
-      $this.find('a.socialuxe-TwitterMFS-selectedLink')
-           .bind('click.twittermfs', handleSelectedLinkClick);
+      $this.find('a.socialuxe-MFS-selectedLink')
+           .bind('click.MFS', handleSelectedLinkClick);
            
       // inject skip link hrefs
-      $this.find('a.socialuxe-TwitterMFS-skipLink').attr('href', options.bypass_url);
+      $this.find('a.socialuxe-MFS-skipLink').attr('href', options.bypass_url);
       
       // attach event for submission
       $form.attr('action', options.action_url);
-      $form.bind('submit.twittermfs', handleFormSubmission);
+      $form.bind('submit.MFS', handleFormSubmission);
     }
-    $friendsBox = $this.find('div.socialuxe-TwitterMFS-friends');
-    $selectedBox = $this.find('div.socialuxe-TwitterMFS-friendsSelected');
-    $loadingBox = $this.find('div.socialuxe-TwitterMFS-loading');
+    $friendsBox = $this.find('div.socialuxe-MFS-friends');
+    $selectedBox = $this.find('div.socialuxe-MFS-friendsSelected');
+    $loadingBox = $this.find('div.socialuxe-MFS-loading');
     
     // we have an id, go ahead and get the proper data for the view present
     $.fn.multifriendselector.getData(options.id, options.friend_type,
@@ -107,16 +108,16 @@
     actiongraf: 'Select your friends to invite to this service.',
     async_post: true,
     async_post_url: null,
-    async_post_redirect: '/',
-    bypass: 'Skip',
+    async_post_success_callback: function() { },
+    async_post_error_callback: function() { },
+    bypass: '',
     bypass_url: '/',
     development_mode: false,
     exclude_ids: [],
     friend_type: 'friends',
     id: null,
     limit: 100,
-    mfs_id: '',
-    post_action: '/'
+    mfs_id: ''
   }
   
   $.fn.multifriendselector.getData = function(id, type, callback, page) {
@@ -160,19 +161,16 @@
     if (options.async_post_url)  {
       endpoint = options.async_post_url;
     } else {
-      endpoint = options.post_action;
+      endpoint = options.action_url;
     }
     
-    if (typeof error_callback != 'function') {
-      errorCallback = function() { }
-    }
     var idString = $selectedInput.val();
     $.post(endpoint, {selected: idString},
            function(data, textStatus) {
              if (textStatus == 'success') {
-               window.location.href = options.async_post_redirect;
+               options.async_post_success_callback();
              } else {
-               errorCallback();
+               options.async_post_error_callback();
              }
            });
   }
@@ -250,42 +248,42 @@
         $friendsBox.append(element);
         
         // attach onclick element to box
-        $(element).bind('click.twittermfs', handleUserClick);
+        $(element).bind('click.MFS', handleUserClick);
         
         // attach hover interactions to box
-        $(element).bind('mouseenter.twittermfs', handleUserMouseEnter);
-        $(element).bind('mouseleave.twittermfs', handleUserMouseLeave);
+        $(element).bind('mouseenter.MFS', handleUserMouseEnter);
+        $(element).bind('mouseleave.MFS', handleUserMouseLeave);
         
       }
       while (--i);
       $friendsBox.show();
       $loadingBox.hide();
-      $this.find('span.socialuxe-TwitterMFS-populationCount')
+      $this.find('span.socialuxe-MFS-populationCount')
            .html(people.length.toString());
     }
   }
   
   function injectLayout($into) {
-    $into.load('../multifriendselector.html', {}, function() {
-      $form = $this.find('form.socialuxe-TwitterMFS');
-      $friendsBox = $this.find('div.socialuxe-TwitterMFS-friends');
-      $selectedBox = $this.find('div.socialuxe-TwitterMFS-friendsSelected');
-      $loadingBox = $this.find('div.socialuxe-TwitterMFS-loading');
-      $selectedInput = $this.find('input.socialuxe-TwitterMFS-selectedID');
+    $into.load('../dev/multifriendselector.html', {}, function() {
+      $form = $this.find('form.socialuxe-MFS');
+      $friendsBox = $this.find('div.socialuxe-MFS-friends');
+      $selectedBox = $this.find('div.socialuxe-MFS-friendsSelected');
+      $loadingBox = $this.find('div.socialuxe-MFS-loading');
+      $selectedInput = $this.find('input.socialuxe-MFS-selectedID');
       
       // attach events to links for toggling between boxes
-      $this.find('a.socialuxe-TwitterMFS-friendsLink')
-           .bind('click.twittermfs', handleFriendsLinkClick);
+      $this.find('a.socialuxe-MFS-friendsLink')
+           .bind('click.MFS', handleFriendsLinkClick);
 
-      $this.find('a.socialuxe-TwitterMFS-selectedLink')
-           .bind('click.twittermfs', handleSelectedLinkClick);
+      $this.find('a.socialuxe-MFS-selectedLink')
+           .bind('click.MFS', handleSelectedLinkClick);
            
       // inject skip link hrefs
-      $this.find('a.socialuxe-TwitterMFS-skipLink').attr('href', options.bypass_url);
+      $this.find('a.socialuxe-MFS-skipLink').attr('href', options.bypass_url);
       
       // attach event for submission
       $form.attr('action', options.action_url);
-      $form.bind('submit.twittermfs', handleFormSubmission);
+      $form.bind('submit.MFS', handleFormSubmission);
     });
   } 
   
@@ -306,7 +304,7 @@
       updateSelectedInput();
     
       // update count
-      $this.find('span.socialuxe-TwitterMFS-selectedCount')
+      $this.find('span.socialuxe-MFS-selectedCount')
            .html(ids_selected.length.toString());
            
       
@@ -320,13 +318,13 @@
       $box.removeClass('selected');
     
       // remove from selected tab
-      $selectedBox.find('div.socialuxe-TwitterMFS-userid-' + id.toString()).remove();
+      $selectedBox.find('div.socialuxe-MFS-userid-' + id.toString()).remove();
     
       // remove from selected IDs array
       array_remove(id, ids_selected);
       
       // update count
-      $this.find('span.socialuxe-TwitterMFS-selectedCount')
+      $this.find('span.socialuxe-MFS-selectedCount')
            .html(ids_selected.length.toString());
       
       // update input box
@@ -342,7 +340,7 @@
   function getUserIDFromBox($box) {
     var classes = $box.attr('class');
     try {
-      return parseInt(classes.match(/socialuxe-TwitterMFS-userid-([0-9]+)/)[1]);
+      return parseInt(classes.match(/socialuxe-MFS-userid-([0-9]+)/)[1]);
     }
     catch (e) {
       return null;
@@ -417,19 +415,19 @@
       // exclude ID if need be
       if (userIsExcluded(user.id)) { return ''; }
       
-      var userMarkup = '<div class="socialuxe-TwitterMFS-user'
-                     + ' socialuxe-TwitterMFS-userid-' + user.id.toString();
+      var userMarkup = '<div class="socialuxe-MFS-user'
+                     + ' socialuxe-MFS-userid-' + user.id.toString();
       if (userIsSelected(user.id)) {
         userMarkup += ' selected';
       }
       userMarkup += '">';
       if (typeof user.profile_image_url != 'undefined') {
         userMarkup += '<img src="' + user.profile_image_url 
-                    + '" class="socialuxe-TwitterMFS-userImage" '
+                    + '" class="socialuxe-MFS-userImage" '
                     + 'alt="Image of ' + user.screen_name + '" />'
       }
-      userMarkup += '<p class="socialuxe-TwitterMFS-userText">'
-                    + '<span class="socialuxe-TwitterMFS-userName">'
+      userMarkup += '<p class="socialuxe-MFS-userText">'
+                    + '<span class="socialuxe-MFS-userName">'
                     + user.screen_name
                     + '</span>'
                     + '</p>'
@@ -440,44 +438,53 @@
   }
   
   function composeLayout() {
-    var mkup = '<form class="socialuxe-TwitterMFS"; '
+    var mkup = '<form class="socialuxe-MFS"; ';
+    
     if (options.mfs_id) {
       mkup += ' id="' + options.mfs_id + '" ';
     }
     
-    mkup += 'method="post" action="' + options.post_action + '">'
-         + '<input type="hidden" class="socialuxe-TwitterMFS-selectedID" name="selected" value="" />'
-         + '<div class="socialuxe-TwitterMFS-head">'
-         + '<div class="socialuxe-TwitterMFS-introCopy">'
+    mkup += 'method="post" action="' + options.action_url + '">'
+         + '<input type="hidden" class="socialuxe-MFS-selectedID" name="selected" value="" />'
+         + '<div class="socialuxe-MFS-head">'
+         + '<div class="socialuxe-MFS-introCopy">'
          + '<h4>' + options.actiontext + '</h4>'
          + '<p>' + options.actiongraf + '</p>'
-         + '</div>'
-         + '<div class="socialuxe-TwitterMFS-skipButton">'
-         + '<a href="' + options.bypass_url + '" class="socialuxe-TwitterMFS-skipLink">' + options.bypass + '</a>'
-         + '</div>'
-         + '</div>'
+         + '</div>';
+         
+    if (options.bypass) {     
+      mkup += '<div class="socialuxe-MFS-skipButton">'
+           + '<a href="' + options.bypass_url + '" class="socialuxe-MFS-skipLink">' + options.bypass + '</a>'
+           + '</div>'
+    }
+    
+     mkup += '</div>'
          /*
-         + '<div class="socialuxe-TwitterMFS-search">'
-         + '<label for="socialuxe-TwitterMFS-searchBox">Search friends</label>'
-         + '<input type="text" class="socialuxe-TwitterMFS-searchBox" name="socialuxe-TwitterMFS-searchBox" />'
+         + '<div class="socialuxe-MFS-search">'
+         + '<label for="socialuxe-MFS-searchBox">Search friends</label>'
+         + '<input type="text" class="socialuxe-MFS-searchBox" name="socialuxe-MFS-searchBox" />'
          + '</div>'
          */
-         + '<div class="socialuxe-TwitterMFS-friendList">'
-         + '<div class="socialuxe-TwitterMFS-friendFilterset">'
+         + '<div class="socialuxe-MFS-friendList">'
+         + '<div class="socialuxe-MFS-friendFilterset">'
          + '<ul>'
-         + '<li><a href="#" class="socialuxe-TwitterMFS-friendsLink"><span class="socialuxe-TwitterMFS-friendTypeCaption">Followers</span>'
-         + '(<span class="socialuxe-TwitterMFS-populationCount"></span>)</a></li>'
-         + '<li><a href="#" class="socialuxe-TwitterMFS-selectedLink">Selected (<span class="socialuxe-TwitterMFS-selectedCount"></span>)</a></li>'
+         + '<li><a href="#" class="socialuxe-MFS-friendsLink"><span class="socialuxe-MFS-friendTypeCaption">Followers</span>'
+         + '(<span class="socialuxe-MFS-populationCount"></span>)</a></li>'
+         + '<li><a href="#" class="socialuxe-MFS-selectedLink">Selected (<span class="socialuxe-MFS-selectedCount"></span>)</a></li>'
          + '</ul>'
          + '</div>'
-         + '<div class="socialuxe-TwitterMFS-loading">&nbsp;</div>'
-         + '<div class="socialuxe-TwitterMFS-friends" style="display: none;"></div>'
-         + '<div class="socialuxe-TwitterMFS-friendsSelected" style="display: none;"></div>'
+         + '<div class="socialuxe-MFS-loading">&nbsp;</div>'
+         + '<div class="socialuxe-MFS-friends" style="display: none;"></div>'
+         + '<div class="socialuxe-MFS-friendsSelected" style="display: none;"></div>'
          + '</div>'
-         + '<div class="socialuxe-TwitterMFS-actionItems">'
-         + '<input type="submit" class="socialuxe-TwitterMFS-inviteButton" value="Invite" />'
-         + '<a href="' + options.bypass_url + '" class="socialuxe-TwitterMFS-skipLink">' + options.bypass + '</a>'
-         + '</div>'
+         + '<div class="socialuxe-MFS-actionItems">'
+         + '<input type="submit" class="socialuxe-MFS-inviteButton" value="Invite" />';
+         
+    if (options.bypass) {
+      mkup += '<a href="' + options.bypass_url + '" class="socialuxe-MFS-skipLink">' + options.bypass + '</a>'
+    }
+    
+    mkup += '</div>'
          + '</form>';
     
     return mkup;
